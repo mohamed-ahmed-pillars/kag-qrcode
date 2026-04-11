@@ -136,6 +136,7 @@
 
 /* Raised card (used by Card component and large surfaces) */
 .neu-card {
+  background: var(--background);
   border-top: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow:
     0 8px 16px -4px rgba(0, 0, 0, 0.35),
@@ -149,7 +150,7 @@
   box-shadow:
     4px 4px 8px rgba(0, 0, 0, 0.12),
     -3px -3px 8px rgba(255, 255, 255, 0.9);
-  transition: box-shadow 0.15s ease, transform 0.1s ease;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 .neu-raised:hover {
   box-shadow:
