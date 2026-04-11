@@ -163,6 +163,13 @@
     inset -2px -2px 5px rgba(255, 255, 255, 0.9);
   transform: scale(0.98);
 }
+.neu-raised:focus-visible {
+  box-shadow:
+    4px 4px 8px rgba(0, 0, 0, 0.12),
+    -3px -3px 8px rgba(255, 255, 255, 0.9),
+    0 0 0 2px rgba(0, 0, 0, 0.5);
+  outline: none;
+}
 
 /* Inset input / pressed surface */
 .neu-inset {
