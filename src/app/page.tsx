@@ -31,7 +31,7 @@ export default async function HomePage() {
           <div className="relative mb-5 w-72 h-32">
             <Image
               src="/main-logo.png"
-              alt={appName}
+              alt="KAG"
               fill
               className="object-contain"
               priority

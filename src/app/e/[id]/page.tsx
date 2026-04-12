@@ -110,7 +110,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
               ) : (
                 <div
                   className="w-24 h-24 rounded-full flex items-center justify-center"
-                  style={{ background: "linear-gradient(135deg, #006443, #F16726)", border: "3px solid rgba(255,255,255,0.3)" }}
+                  style={{ background: "linear-gradient(135deg, #555, #333)", border: "3px solid rgba(255,255,255,0.3)" }}
                 >
                   <span className="text-white text-3xl font-bold">
                     {employee.name.charAt(0).toUpperCase()}
@@ -123,10 +123,10 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
             <div className="px-6 pb-6 text-center">
               <h1 className="text-xl font-bold text-white">{employee.name}</h1>
               {employee.title && (
-                <p className="text-sm mt-1" style={{ color: "#006443" }}>{employee.title}</p>
+                <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.6)" }}>{employee.title}</p>
               )}
               {employee.bio && (
-                <p className="text-sm mt-3 leading-relaxed" style={{ color: "#F16726" }}>
+                <p className="text-sm mt-3 leading-relaxed" style={{ color: "rgba(255,255,255,0.7)" }}>
                   {employee.bio}
                 </p>
               )}
