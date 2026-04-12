@@ -47,6 +47,12 @@ function SocialBox({
   const Icon = imageSrc ? null : getIcon(link.iconName);
 
   const handleClick = () => {
+    try {
+      const parsed = new URL(link.url);
+      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return;
+    } catch {
+      return;
+    }
     fetch(`/api/track/social_link/${link.id}`, { method: "POST" }).catch(() => {});
     window.open(link.url, "_blank", "noopener,noreferrer");
   };
@@ -54,6 +60,8 @@ function SocialBox({
   return (
     <button
       onClick={handleClick}
+      aria-label={link.label}
+      title={link.label}
       className="group relative flex flex-col items-center justify-center gap-3 rounded-2xl p-5 transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer border border-white/10"
       style={{
         background: `linear-gradient(135deg, ${style.from}cc, ${style.to}cc)`,
@@ -65,7 +73,7 @@ function SocialBox({
         {imageSrc ? (
           <Image
             src={imageSrc}
-            alt={key}
+            alt={link.label}
             width={40}
             height={40}
             className="object-contain drop-shadow"
@@ -125,7 +133,7 @@ export default function SocialCard({ links, title = "CONNECT WITH US" }: Props) 
             <SocialBox key={link.id} link={link} delay={DELAYS[i]} />
           ))}
           {Array.from({ length: decorativeCount }).map((_, i) => (
-            <DecorativeBox key={`dec-${i}`} delay={DELAYS[slots.length + i]} />
+            <DecorativeBox key={`dec-${i}`} delay={DELAYS[slots.length + i] ?? "0ms"} />
           ))}
         </div>
       </div>
