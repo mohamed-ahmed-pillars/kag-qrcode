@@ -3,7 +3,7 @@ import { socialLinks } from "@/lib/schema";
 import { asc, eq } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
-import SocialCarousel from "@/components/public/SocialCarousel";
+import SocialCard from "@/components/public/SocialCard";
 import BackgroundVideo from "@/components/public/BackgroundVideo";
 
 export const dynamic = "force-dynamic";
@@ -49,9 +49,9 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Social Links Carousel */}
-        <div className="w-full" style={{ marginTop: "50px" }}>
-          <SocialCarousel links={links} />
+        {/* Social Card */}
+        <div className="w-full px-6" style={{ marginTop: "50px" }}>
+          <SocialCard links={links} />
         </div>
 
         {/* Footer */}
