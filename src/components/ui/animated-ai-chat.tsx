@@ -8,11 +8,8 @@ import {
     Figma,
     MonitorIcon,
     SendIcon,
-    XIcon,
     LoaderIcon,
     Sparkles,
-    Command,
-    Paperclip,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as React from "react";
@@ -26,6 +23,13 @@ export interface SocialLink {
     url: string;
     iconName: string | null;
 }
+
+const SUGGESTED_PROMPTS: string[] = [
+    "What products and services does KAG provide?",
+    "How can I reach customer service?",
+    "Where are your offices located?",
+    "How do I request a quote?",
+];
 
 const SOCIAL_COLORS: Record<string, string> = {
     instagram: "#e1306c",
@@ -101,58 +105,57 @@ interface CommandSuggestion {
 }
 
 interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  containerClassName?: string;
-  showRing?: boolean;
+    extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+    containerClassName?: string;
+    showRing?: boolean;
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, containerClassName, showRing = true, ...props }, ref) => {
-    const [isFocused, setIsFocused] = React.useState(false);
+    ({ className, containerClassName, showRing = true, ...props }, ref) => {
+        const [isFocused, setIsFocused] = React.useState(false);
 
-    return (
-      <div className={cn("relative", containerClassName)}>
-        <textarea
-          className={cn(
-            "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm",
-            "transition-all duration-200 ease-in-out",
-            "placeholder:text-muted-foreground",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-            showRing ? "focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0" : "",
-            className
-          )}
-          ref={ref}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          {...props}
-        />
+        return (
+            <div className={cn("relative", containerClassName)}>
+                <textarea
+                    className={cn(
+                        "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm",
+                        "transition-all duration-200 ease-in-out",
+                        "placeholder:text-muted-foreground",
+                        "disabled:cursor-not-allowed disabled:opacity-50",
+                        showRing ? "focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0" : "",
+                        className
+                    )}
+                    ref={ref}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    {...props}
+                />
 
-        {showRing && isFocused && (
-          <motion.span
-            className="absolute inset-0 rounded-md pointer-events-none ring-2 ring-offset-0 ring-violet-500/30"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          />
-        )}
+                {showRing && isFocused && (
+                    <motion.span
+                        className="absolute inset-0 rounded-md pointer-events-none ring-2 ring-offset-0 ring-violet-500/30"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                    />
+                )}
 
-        {props.onChange && (
-          <div
-            className="absolute bottom-2 right-2 opacity-0 w-2 h-2 bg-violet-500 rounded-full"
-            style={{ animation: "none" }}
-            id="textarea-ripple"
-          />
-        )}
-      </div>
-    );
-  }
+                {props.onChange && (
+                    <div
+                        className="absolute bottom-2 right-2 opacity-0 w-2 h-2 bg-violet-500 rounded-full"
+                        style={{ animation: "none" }}
+                        id="textarea-ripple"
+                    />
+                )}
+            </div>
+        );
+    }
 );
 Textarea.displayName = "Textarea";
 
 export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[] }) {
     const [value, setValue] = useState("");
-    const [attachments, setAttachments] = useState<string[]>([]);
     const [isTyping, setIsTyping] = useState(false);
     const [, startTransition] = useTransition();
     const [activeSuggestion, setActiveSuggestion] = useState<number>(-1);
@@ -203,7 +206,7 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
         } else {
             setShowCommandPalette(false);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value]);
 
     useEffect(() => {
@@ -276,15 +279,6 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
         }
     };
 
-    const handleAttachFile = () => {
-        const mockFileName = `file-${Math.floor(Math.random() * 1000)}.pdf`;
-        setAttachments((prev) => [...prev, mockFileName]);
-    };
-
-    const removeAttachment = (index: number) => {
-        setAttachments((prev) => prev.filter((_, i) => i !== index));
-    };
-
     const openSocialLink = (link: SocialLink) => {
         let protocol: string;
         try {
@@ -297,7 +291,7 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
 
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(link.id);
         if (isUuid) {
-            fetch(`/api/track/social_link/${link.id}`, { method: "POST" }).catch(() => {});
+            fetch(`/api/track/social_link/${link.id}`, { method: "POST" }).catch(() => { });
         }
 
         if (protocol === "tel:" || protocol === "mailto:") {
@@ -336,9 +330,16 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
                             transition={{ delay: 0.2, duration: 0.5 }}
                             className="inline-block"
                         >
-                            <h1 className="text-3xl font-medium tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white/90 to-white/40 pb-1">
-                                How can I help today?
-                            </h1>
+                            <div className="flex justify-center pb-2">
+                                <Image
+                                    src="/icon-light.png"
+                                    alt="KAG — Khalid Abdelhamid Group"
+                                    width={280}
+                                    height={175}
+                                    priority
+                                    className="h-auto w-[220px] sm:w-[260px] drop-shadow-[0_4px_24px_rgba(255,255,255,0.08)]"
+                                />
+                            </div>
                             <motion.div
                                 className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
                                 initial={{ width: 0, opacity: 0 }}
@@ -441,70 +442,7 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
                             />
                         </div>
 
-                        <AnimatePresence>
-                            {attachments.length > 0 && (
-                                <motion.div
-                                    className="px-4 pb-3 flex gap-2 flex-wrap"
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: "auto" }}
-                                    exit={{ opacity: 0, height: 0 }}
-                                >
-                                    {attachments.map((file, index) => (
-                                        <motion.div
-                                            key={index}
-                                            className="flex items-center gap-2 text-xs bg-white/[0.03] py-1.5 px-3 rounded-lg text-white/70"
-                                            initial={{ opacity: 0, scale: 0.9 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            exit={{ opacity: 0, scale: 0.9 }}
-                                        >
-                                            <span>{file}</span>
-                                            <button
-                                                onClick={() => removeAttachment(index)}
-                                                className="text-white/40 hover:text-white transition-colors"
-                                            >
-                                                <XIcon className="w-3 h-3" />
-                                            </button>
-                                        </motion.div>
-                                    ))}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        <div className="p-4 border-t border-white/[0.05] flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-3">
-                                <motion.button
-                                    type="button"
-                                    onClick={handleAttachFile}
-                                    whileTap={{ scale: 0.94 }}
-                                    className="p-2 text-white/40 hover:text-white/90 rounded-lg transition-colors relative group"
-                                >
-                                    <Paperclip className="w-4 h-4" />
-                                    <motion.span
-                                        className="absolute inset-0 bg-white/[0.05] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                                        layoutId="button-highlight"
-                                    />
-                                </motion.button>
-                                <motion.button
-                                    type="button"
-                                    data-command-button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setShowCommandPalette((prev) => !prev);
-                                    }}
-                                    whileTap={{ scale: 0.94 }}
-                                    className={cn(
-                                        "p-2 text-white/40 hover:text-white/90 rounded-lg transition-colors relative group",
-                                        showCommandPalette && "bg-white/10 text-white/90"
-                                    )}
-                                >
-                                    <Command className="w-4 h-4" />
-                                    <motion.span
-                                        className="absolute inset-0 bg-white/[0.05] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                                        layoutId="button-highlight"
-                                    />
-                                </motion.button>
-                            </div>
-
+                        <div className="p-4 border-t border-white/[0.05] flex items-center justify-end gap-4">
                             <motion.button
                                 type="button"
                                 onClick={handleSendMessage}
@@ -530,6 +468,30 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
                     </motion.div>
 
                     <div className="flex flex-wrap items-center justify-center gap-2">
+                        {SUGGESTED_PROMPTS.map((prompt, index) => (
+                            <motion.button
+                                key={prompt}
+                                type="button"
+                                onClick={() => {
+                                    setValue(prompt);
+                                    setTimeout(() => {
+                                        textareaRef.current?.focus();
+                                        adjustHeight();
+                                    }, 0);
+                                }}
+                                className="px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.09] rounded-full text-xs text-white/70 hover:text-white border border-white/[0.06] transition-all"
+                                initial={{ opacity: 0, y: 6 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.15 + index * 0.06 }}
+                                whileHover={{ y: -1 }}
+                                whileTap={{ scale: 0.97 }}
+                            >
+                                {prompt}
+                            </motion.button>
+                        ))}
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-center gap-2">
                         {socialLinks.map((link, index) => {
                             const key = (link.iconName ?? "link").toLowerCase();
                             const color = SOCIAL_COLORS[key] ?? "#94a3b8";
@@ -541,7 +503,11 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
                                     type="button"
                                     onClick={() => openSocialLink(link)}
                                     aria-label={link.label}
-                                    className="flex items-center gap-2 px-3 py-2 bg-white/[0.03] hover:bg-white/[0.08] rounded-lg text-sm text-white/70 hover:text-white transition-all relative group"
+                                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-white/80 hover:text-white transition-all relative group backdrop-blur-md shadow-lg shadow-[#374c9b]/30 hover:shadow-[#374c9b]/50"
+                                    style={{
+                                        background:
+                                            "linear-gradient(180deg, rgba(85,108,189,0.40) 0%, rgba(55,76,155,0.32) 60%, rgba(40,56,125,0.40) 100%)",
+                                    }}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: index * 0.07 }}
