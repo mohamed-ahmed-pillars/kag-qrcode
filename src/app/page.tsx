@@ -38,6 +38,27 @@ export default async function HomePage() {
       <section className="relative" style={{ zIndex: 2 }}>
         <AnimatedAIChat socialLinks={links} />
       </section>
+
+      <footer className="relative px-6 pb-8" style={{ zIndex: 2 }}>
+        <div className="mx-auto mt-6 flex flex-col justify-between text-center text-xs md:max-w-7xl">
+          <div className="flex flex-row flex-wrap items-center justify-center gap-1 text-white/60">
+            <span>©</span>
+            <span>{new Date().getFullYear()}</span>
+            <span className="font-bold text-white">KAG.</span>
+            <span>All rights reserved.</span>
+            <span className="mx-1">·</span>
+            <span>Made by</span>
+            <a
+              href="https://technologypillars.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-white transition-colors duration-200 hover:text-white/80"
+            >
+              Technology Pillars
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
