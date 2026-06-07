@@ -8,6 +8,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Co Headline";
   src: url("/fonts/Co Headline Bold.otf") format("opentype");
@@ -15,6 +16,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Capriola";
   src: url("/fonts/Capriola-Regular.ttf") format("truetype");
@@ -118,6 +120,7 @@
 .font-headline {
   font-family: "Co Headline", sans-serif;
 }
+
 .font-capriola {
   font-family: "Capriola", sans-serif;
 }
@@ -128,6 +131,7 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
@@ -152,17 +156,20 @@
     -3px -3px 8px rgba(255, 255, 255, 0.9);
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
+
 .neu-raised:hover {
   box-shadow:
     5px 5px 10px rgba(0, 0, 0, 0.15),
     -4px -4px 10px rgba(255, 255, 255, 0.95);
 }
+
 .neu-raised:active {
   box-shadow:
     inset 2px 2px 5px rgba(0, 0, 0, 0.1),
     inset -2px -2px 5px rgba(255, 255, 255, 0.9);
   transform: scale(0.98);
 }
+
 .neu-raised:focus-visible {
   box-shadow:
     4px 4px 8px rgba(0, 0, 0, 0.12),
@@ -179,6 +186,39 @@
     inset -3px -3px 7px rgba(255, 255, 255, 0.9);
 }
 
+/* Icon bounce on hover */
+@keyframes icon-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  30%       { transform: translateY(-5px) scale(1.15); }
+  60%       { transform: translateY(-2px) scale(1.08); }
+}
+
+.icon-bounce {
+  transition: transform 0.2s ease;
+}
+
+.group:hover .icon-bounce {
+  animation: icon-bounce 0.5s ease forwards;
+}
+
+/* Staggered slide-in for social link rows */
+@keyframes slide-in-row {
+  from { opacity: 0; transform: translateX(-18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.social-row {
+  animation: slide-in-row 0.35s ease both;
+}
+
+/* Animated AI chat bg constraint */
+.lab-bg::before {
+  overflow: hidden;
+  max-width: 100vw;
+  max-height: 100vh;
+  box-sizing: border-box;
+}
+
 /* Small badge / pill */
 .neu-badge {
   background: #f0f0f0;
@@ -191,13 +231,15 @@
   * {
     @apply border-border outline-ring/50;
   }
-  html, body {
+
+  html,
+  body {
     margin: 0;
     padding: 0;
   }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
-

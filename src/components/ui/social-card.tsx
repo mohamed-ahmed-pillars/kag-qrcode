@@ -28,19 +28,30 @@ interface SocialLink {
 
 export default function SocialCard({ links }: { links: SocialLink[] }) {
   const handleClick = (link: SocialLink) => {
+    let protocol: string;
     try {
-      const parsed = new URL(link.url);
-      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return;
+      protocol = new URL(link.url).protocol;
     } catch {
       return;
     }
-    fetch(`/api/track/social_link/${link.id}`, { method: "POST" }).catch(() => {});
-    window.open(link.url, "_blank", "noopener,noreferrer");
+    const allowed = ["https:", "http:", "tel:", "mailto:"];
+    if (!allowed.includes(protocol)) return;
+
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(link.id);
+    if (isUuid) {
+      fetch(`/api/track/social_link/${link.id}`, { method: "POST" }).catch(() => { });
+    }
+
+    if (protocol === "tel:" || protocol === "mailto:") {
+      window.location.href = link.url;
+    } else {
+      window.open(link.url, "_blank", "noopener,noreferrer");
+    }
   };
 
   return (
     <div className="neu-card rounded-3xl p-5 w-72">
-      {links.map((link) => {
+      {links.map((link, i) => {
         const key = (link.iconName ?? "link").toLowerCase();
         const color = PLATFORM_COLORS[key] ?? "#64748b";
         const imageSrc = ICON_IMAGE_MAP[key];
@@ -51,10 +62,11 @@ export default function SocialCard({ links }: { links: SocialLink[] }) {
             key={link.id}
             onClick={() => handleClick(link)}
             aria-label={link.label}
-            className="neu-raised w-full flex items-center gap-4 rounded-2xl px-4 py-3 mb-3 last:mb-0 cursor-pointer"
+            className="social-row group neu-raised w-full flex items-center gap-4 rounded-2xl px-4 py-3 mb-3 last:mb-0 cursor-pointer"
+            style={{ animationDelay: `${i * 80}ms` }}
           >
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+              className="icon-bounce w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: `${color}22` }}
             >
               {imageSrc ? (
@@ -74,7 +86,7 @@ export default function SocialCard({ links }: { links: SocialLink[] }) {
               {link.label}
             </span>
 
-            <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />
+            <ChevronRight className="w-4 h-4 text-gray-400 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
           </button>
         );
       })}

@@ -25,41 +25,46 @@ async function seed() {
     console.log("ℹ️  Super admin already exists");
   }
 
-  // Create sample social links
-  const existingLinks = await db.select().from(socialLinks).limit(1);
-  if (existingLinks.length === 0) {
-    await db.insert(socialLinks).values([
-      {
-        label: "Instagram",
-        url: "https://instagram.com/kagegypt",
-        iconName: "instagram",
-        displayOrder: 1,
-        active: true,
-      },
-      {
-        label: "Facebook",
-        url: "https://facebook.com/kagegypt",
-        iconName: "facebook",
-        displayOrder: 2,
-        active: true,
-      },
-      {
-        label: "WhatsApp",
-        url: "https://wa.me/1234567890",
-        iconName: "message-circle",
-        displayOrder: 3,
-        active: true,
-      },
-      {
-        label: "Website",
-        url: "https://kagegypt.com",
-        iconName: "globe",
-        displayOrder: 4,
-        active: true,
-      },
-    ]);
-    console.log("✅ Sample social links created");
-  }
+  // Reset social links to the canonical KAG set (always rebuilds on seed)
+  await db.delete(socialLinks);
+  await db.insert(socialLinks).values([
+    {
+      label: "Facebook",
+      url: "https://www.facebook.com/share/1DNJqy7Bou/?mibextid=wwXIfr",
+      iconName: "facebook",
+      displayOrder: 1,
+      active: true,
+    },
+    {
+      label: "Instagram",
+      url: "https://www.instagram.com/kag.egypt",
+      iconName: "instagram",
+      displayOrder: 2,
+      active: true,
+    },
+    {
+      label: "LinkedIn",
+      url: "https://www.linkedin.com/company/kagegypt/",
+      iconName: "linkedin",
+      displayOrder: 3,
+      active: true,
+    },
+    {
+      label: "WhatsApp",
+      url: "https://wa.me/201033322050",
+      iconName: "whatsapp",
+      displayOrder: 4,
+      active: true,
+    },
+    {
+      label: "E-mail",
+      url: "mailto:wecare@kagegypt.com",
+      iconName: "mail",
+      displayOrder: 5,
+      active: true,
+    },
+  ]);
+  console.log("✅ Social links reset to KAG canonical set");
 
   console.log("✅ Seed complete");
   process.exit(0);
