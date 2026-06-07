@@ -323,7 +323,7 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
                 >
-                    <div className="rounded-3xl bg-black/60 backdrop-blur-sm shadow-2xl p-6 sm:p-8 space-y-8 outline outline-2 outline-white -outline-offset-2">
+                    <div className="rounded-3xl bg-black/60 backdrop-blur-sm shadow-2xl p-6 sm:p-8 space-y-8 outline outline-2 sm:outline-1 outline-white -outline-offset-2 sm:-outline-offset-1">
                         <div className="text-center space-y-3">
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
@@ -371,7 +371,7 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
                         </div>
 
                         <motion.div
-                            className="relative backdrop-blur-2xl bg-white/[0.02] rounded-2xl shadow-2xl outline outline-2 outline-white -outline-offset-2"
+                            className="relative backdrop-blur-2xl bg-white/[0.02] rounded-2xl shadow-2xl outline outline-2 sm:outline-1 outline-white -outline-offset-2 sm:-outline-offset-1"
                             initial={{ scale: 0.98 }}
                             animate={{ scale: 1 }}
                             transition={{ delay: 0.1 }}
