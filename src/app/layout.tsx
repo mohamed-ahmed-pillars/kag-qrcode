@@ -64,8 +64,9 @@ const handicrafts = localFont({
 });
 
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_APP_NAME || "KAG",
-  description: "Khalid Abdelhamid Group — connect with KAG",
+  title: "KAG — Khalid Abdelhamid Group | Egyptian Food Manufacturer",
+  description:
+    "KAG (Khalid Abdelhamid Group) is an Egyptian food manufacturer producing sauces, jams, juices, fava beans, and condiments for retail, private label, and global export from Cairo.",
 };
 
 export default function RootLayout({
