@@ -22,9 +22,9 @@ FROM base AS prod-deps
 COPY package.json bun.lock* ./
 RUN --mount=type=cache,target=/root/.bun/install/cache \
     bun install --frozen-lockfile --production
-# drizzle-kit + tsx are dev deps but needed at runtime for db:migrate / db:seed
+# drizzle-kit is a dev dep but needed at runtime for db:migrate / db:push
 RUN --mount=type=cache,target=/root/.bun/install/cache \
-    bun add --no-save drizzle-kit tsx
+    bun add --no-save drizzle-kit
 
 # ---------- runner: minimal runtime image ----------
 FROM base AS runner
