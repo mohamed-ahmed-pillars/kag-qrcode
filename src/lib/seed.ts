@@ -29,38 +29,45 @@ async function seed() {
   await db.delete(socialLinks);
   await db.insert(socialLinks).values([
     {
+      label: "Website",
+      url: "https://www.kagegypt.com",
+      iconName: "globe",
+      displayOrder: 1,
+      active: true,
+    },
+    {
       label: "Facebook",
       url: "https://www.facebook.com/share/1DNJqy7Bou/?mibextid=wwXIfr",
       iconName: "facebook",
-      displayOrder: 1,
+      displayOrder: 2,
       active: true,
     },
     {
       label: "Instagram",
       url: "https://www.instagram.com/kag.egypt",
       iconName: "instagram",
-      displayOrder: 2,
+      displayOrder: 3,
       active: true,
     },
     {
       label: "LinkedIn",
       url: "https://www.linkedin.com/company/kagegypt/",
       iconName: "linkedin",
-      displayOrder: 3,
+      displayOrder: 4,
       active: true,
     },
     {
       label: "WhatsApp",
       url: "https://wa.me/201033322050",
       iconName: "whatsapp",
-      displayOrder: 4,
+      displayOrder: 5,
       active: true,
     },
     {
       label: "E-mail",
       url: "mailto:wecare@kagegypt.com",
       iconName: "mail",
-      displayOrder: 5,
+      displayOrder: 6,
       active: true,
     },
   ]);

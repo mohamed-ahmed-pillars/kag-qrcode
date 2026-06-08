@@ -8,7 +8,6 @@ import {
     Figma,
     MonitorIcon,
     SendIcon,
-    LoaderIcon,
     Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,6 +15,7 @@ import * as React from "react";
 import Image from "next/image";
 import { getIcon, ICON_IMAGE_MAP } from "@/lib/icons";
 import { Typewriter } from "@/components/ui/typewriter";
+import { GradientAlert } from "@/components/ui/alert";
 
 export interface SocialLink {
     id: string;
@@ -156,7 +156,6 @@ Textarea.displayName = "Textarea";
 
 export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[] }) {
     const [value, setValue] = useState("");
-    const [isTyping, setIsTyping] = useState(false);
     const [, startTransition] = useTransition();
     const [activeSuggestion, setActiveSuggestion] = useState<number>(-1);
     const [showCommandPalette, setShowCommandPalette] = useState(false);
@@ -167,6 +166,8 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
         maxHeight: 200,
     });
     const [inputFocused, setInputFocused] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const alertTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const commandPaletteRef = useRef<HTMLDivElement>(null);
 
     const commandSuggestions: CommandSuggestion[] = [
@@ -234,17 +235,21 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
     }, []);
 
     const handleSendMessage = () => {
-        if (value.trim()) {
-            startTransition(() => {
-                setIsTyping(true);
-                setTimeout(() => {
-                    setIsTyping(false);
-                    setValue("");
-                    adjustHeight(true);
-                }, 3000);
-            });
-        }
+        if (!value.trim()) return;
+        startTransition(() => {
+            setShowAlert(true);
+            setValue("");
+            adjustHeight(true);
+            if (alertTimerRef.current) clearTimeout(alertTimerRef.current);
+            alertTimerRef.current = setTimeout(() => setShowAlert(false), 4000);
+        });
     };
+
+    useEffect(() => {
+        return () => {
+            if (alertTimerRef.current) clearTimeout(alertTimerRef.current);
+        };
+    }, []);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (showCommandPalette) {
@@ -449,7 +454,7 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
                                     onClick={handleSendMessage}
                                     whileHover={{ scale: 1.01 }}
                                     whileTap={{ scale: 0.98 }}
-                                    disabled={isTyping || !value.trim()}
+                                    disabled={!value.trim()}
                                     className={cn(
                                         "px-4 py-2 rounded-lg text-sm font-medium transition-all",
                                         "flex items-center gap-2",
@@ -458,11 +463,7 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
                                             : "bg-white/[0.05] text-white/40"
                                     )}
                                 >
-                                    {isTyping ? (
-                                        <LoaderIcon className="w-4 h-4 animate-[spin_2s_linear_infinite]" />
-                                    ) : (
-                                        <SendIcon className="w-4 h-4" />
-                                    )}
+                                    <SendIcon className="w-4 h-4" />
                                     <span>Send</span>
                                 </motion.button>
                             </div>
@@ -546,26 +547,20 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
                 </motion.div>
             </div>
 
-            <AnimatePresence>
-                {isTyping && (
-                    <motion.div
-                        className="fixed bottom-8 mx-auto transform -translate-x-1/2 backdrop-blur-2xl bg-white/[0.02] rounded-full px-4 py-2 shadow-lg border border-white/[0.05]"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 20 }}
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-7 rounded-full bg-white/[0.05] flex items-center justify-center text-center">
-                                <span className="text-xs font-medium text-white/90 mb-0.5">Fahem</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-white/70">
-                                <span>Thinking</span>
-                                <TypingDots />
-                            </div>
+            <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md pointer-events-none">
+                <AnimatePresence>
+                    {showAlert && (
+                        <div className="pointer-events-auto">
+                            <GradientAlert
+                                variant="information"
+                                title="Under Construction"
+                                description="This feature isn't available yet — coming soon."
+                                onClose={() => setShowAlert(false)}
+                            />
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>
+            </div>
 
             {inputFocused && (
                 <motion.div
@@ -582,31 +577,6 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
                     }}
                 />
             )}
-        </div>
-    );
-}
-
-function TypingDots() {
-    return (
-        <div className="flex items-center ml-1">
-            {[1, 2, 3].map((dot) => (
-                <motion.div
-                    key={dot}
-                    className="w-1.5 h-1.5 bg-white/90 rounded-full mx-0.5"
-                    initial={{ opacity: 0.3 }}
-                    animate={{
-                        opacity: [0.3, 0.9, 0.3],
-                        scale: [0.85, 1.1, 0.85],
-                    }}
-                    transition={{
-                        duration: 1.2,
-                        repeat: Infinity,
-                        delay: dot * 0.15,
-                        ease: "easeInOut",
-                    }}
-                    style={{ boxShadow: "0 0 4px rgba(255, 255, 255, 0.3)" }}
-                />
-            ))}
         </div>
     );
 }

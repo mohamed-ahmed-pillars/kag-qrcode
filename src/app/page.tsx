@@ -7,6 +7,7 @@ import { AnimatedAIChat, type SocialLink } from "@/components/ui/animated-ai-cha
 export const dynamic = "force-dynamic";
 
 const FALLBACK_LINKS: SocialLink[] = [
+  { id: "web", label: "Website", url: "https://www.kagegypt.com", iconName: "globe" },
   { id: "fb", label: "Facebook", url: "https://www.facebook.com/share/1DNJqy7Bou/?mibextid=wwXIfr", iconName: "facebook" },
   { id: "ig", label: "Instagram", url: "https://www.instagram.com/kag.egypt", iconName: "instagram" },
   { id: "li", label: "LinkedIn", url: "https://www.linkedin.com/company/kagegypt/", iconName: "linkedin" },
