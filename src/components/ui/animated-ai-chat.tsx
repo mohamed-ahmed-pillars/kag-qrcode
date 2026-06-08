@@ -438,7 +438,7 @@ export function AnimatedAIChat({ socialLinks = [] }: { socialLinks?: SocialLink[
                                         "resize-none",
                                         "bg-transparent",
                                         "border-none",
-                                        "text-white/90 text-sm",
+                                        "text-white/90 text-base sm:text-sm",
                                         "focus:outline-none",
                                         "placeholder:text-white",
                                         "min-h-[60px]"
