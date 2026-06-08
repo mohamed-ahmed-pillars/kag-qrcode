@@ -1,62 +1,57 @@
-# Use Node.js for building (more compatible)
-FROM node:20-alpine AS base
+# syntax=docker/dockerfile:1.7
 
-# Install dependencies
+# ---------- base ----------
+FROM oven/bun:1-alpine AS base
+WORKDIR /app
+
+# ---------- deps: install all deps for build (cached) ----------
 FROM base AS deps
-WORKDIR /app
+COPY package.json bun.lock* ./
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun install --frozen-lockfile
 
-# Install dependencies using npm
-COPY package.json package-lock.json* ./
-RUN npm ci
-
-# Build the application with Node.js
+# ---------- builder: build Next standalone ----------
 FROM base AS builder
-WORKDIR /app
-
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Build Next.js
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build
+RUN bun run build
 
-# Production image with Node.js
+# ---------- prod-deps: lean node_modules for migrations ----------
+FROM base AS prod-deps
+COPY package.json bun.lock* ./
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun install --frozen-lockfile --production
+# drizzle-kit + tsx are dev deps but needed at runtime for db:migrate / db:seed
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun add --no-save drizzle-kit tsx
+
+# ---------- runner: minimal runtime image ----------
 FROM base AS runner
-WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+RUN addgroup -S -g 1001 nodejs && adduser -S -u 1001 -G nodejs nextjs
 
-# Copy package files for migration tools
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/package-lock.json* ./package-lock.json
+# Migration tooling: package.json + drizzle config + lib files
+COPY --chown=nextjs:nodejs --from=builder /app/package.json ./package.json
+COPY --chown=nextjs:nodejs --from=builder /app/drizzle.config.ts ./drizzle.config.ts
+COPY --chown=nextjs:nodejs --from=builder /app/src/lib/schema.ts ./src/lib/schema.ts
+COPY --chown=nextjs:nodejs --from=builder /app/src/lib/db.ts ./src/lib/db.ts
+COPY --chown=nextjs:nodejs --from=builder /app/src/lib/seed.ts ./src/lib/seed.ts
 
-# Copy database schema and migration config
-COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
-COPY --from=builder /app/src/lib/schema.ts ./src/lib/schema.ts
-COPY --from=builder /app/src/lib/db.ts ./src/lib/db.ts
-COPY --from=builder /app/src/lib/seed.ts ./src/lib/seed.ts
+# Lean node_modules (prod deps + drizzle-kit + tsx)
+COPY --chown=nextjs:nodejs --from=prod-deps /app/node_modules ./node_modules
 
-# Copy node_modules for drizzle-kit and dependencies
-COPY --from=builder /app/node_modules ./node_modules
-
-COPY --from=builder /app/public ./public
-
-# Copy standalone build
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Fix permissions
-RUN chown -R nextjs:nodejs /app
+# Public assets + Next standalone server + static
+COPY --chown=nextjs:nodejs --from=builder /app/public ./public
+COPY --chown=nextjs:nodejs --from=builder /app/.next/standalone ./
+COPY --chown=nextjs:nodejs --from=builder /app/.next/static ./.next/static
 
 USER nextjs
-
 EXPOSE 3000
-
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
 
 CMD ["node", "server.js"]
