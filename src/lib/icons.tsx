@@ -44,7 +44,7 @@ export const ICON_IMAGE_MAP: Record<string, string> = {
   "message-circle": "/icons/whatsapp.svg",
   mail: "/icons/maildotru.svg",
   email: "/icons/maildotru.svg",
-  globe: "/world-wide-web_icon.png",
+  globe: "/web_icon.svg",
 };
 
 export const AVAILABLE_ICONS = [
