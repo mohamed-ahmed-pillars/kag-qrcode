@@ -36,14 +36,15 @@ ENV HOSTNAME=0.0.0.0
 
 RUN addgroup -S -g 1001 nodejs && adduser -S -u 1001 -G nodejs nextjs
 
-# Migration tooling: package.json + drizzle config + lib files
+# Migration tooling: package.json + drizzle config + lib files + migration SQL
 COPY --chown=nextjs:nodejs --from=builder /app/package.json ./package.json
 COPY --chown=nextjs:nodejs --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 COPY --chown=nextjs:nodejs --from=builder /app/src/lib/schema.ts ./src/lib/schema.ts
 COPY --chown=nextjs:nodejs --from=builder /app/src/lib/db.ts ./src/lib/db.ts
 COPY --chown=nextjs:nodejs --from=builder /app/src/lib/seed.ts ./src/lib/seed.ts
+COPY --chown=nextjs:nodejs --from=builder /app/drizzle ./drizzle
 
-# Lean node_modules (prod deps + drizzle-kit + tsx)
+# Lean node_modules (prod deps + drizzle-kit for db:push at startup)
 COPY --chown=nextjs:nodejs --from=prod-deps /app/node_modules ./node_modules
 
 # Public assets + Next standalone server + static
@@ -51,7 +52,11 @@ COPY --chown=nextjs:nodejs --from=builder /app/public ./public
 COPY --chown=nextjs:nodejs --from=builder /app/.next/standalone ./
 COPY --chown=nextjs:nodejs --from=builder /app/.next/static ./.next/static
 
+# Entrypoint runs db:push then starts the server
+COPY --chown=nextjs:nodejs docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
+
 USER nextjs
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["/app/docker-entrypoint.sh"]

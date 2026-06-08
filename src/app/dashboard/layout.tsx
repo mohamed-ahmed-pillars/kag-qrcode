@@ -28,9 +28,9 @@ export default async function DashboardLayout({
           <SidebarTrigger className="-ml-1 cursor-pointer" />
           <Separator orientation="vertical" className="h-4" />
           <div className="flex items-center gap-2 min-w-0">
-            <span className="w-2 h-2 rounded-full bg-orange-500 shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-foreground shrink-0" />
             <span className="text-sm font-medium text-foreground truncate">
-              Cityfirstfoods
+              {process.env.NEXT_PUBLIC_APP_NAME || "KAG"}
             </span>
             <span className="text-muted-foreground/40 text-sm hidden sm:block">/</span>
             <span className="text-sm text-muted-foreground hidden sm:block truncate">

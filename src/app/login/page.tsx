@@ -37,7 +37,7 @@ export default function LoginPage() {
     router.push("/dashboard");
   }
 
-  const appName = process.env.NEXT_PUBLIC_APP_NAME || "Cityfirstfoods";
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || "KAG";
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center px-4">
